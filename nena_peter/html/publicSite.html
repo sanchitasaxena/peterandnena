@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="demo" ng-controller="Ctrl">
+<head>
+<meta charset="UTF-8">
+<title>{{ page_name }} - {{ Site }}</title>
+<link rel="stylesheet" href="../../files/fonts.css" type="text/css" />
+
+
+<link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Pacifico" />
+<link href='http://fonts.googleapis.com/css?family=Imprima' rel='stylesheet' type='text/css'>
+
+
+
+
+<style type="text/css">
+
+h1, h2, header { font-family: Pacifico; font-size: 24px; font-style: normal; font-variant: normal;font-weight: 500;line-height: 26.4px;padding: 25px;}
+
+a {font-family: Pacifico; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 500; text-decoration:none;}
+blockquote { font-family: Pacifico; font-size: 21px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 30px;}
+
+p, div { font: 400 14px/1.6 'Imprima', Verdana, Helvetica, sans-serif; }
+
+body { font-family: 'Sans-serif', sans-serif; color: #002242; background-color:#FFFFFF;}
+
+.user_gate { font-size: 12px; text-align: right; position: fixed; top: 10px; right: 10px;  }
+.user_gate a { color: blue; text-decoration: none; }
+.user_gate a:visited { color: blue; }
+.user_gate a:hover { text-decoration: underline; }
+
+.left_aside { width: 225px; padding: 10px; display: inline-block; vertical-align:top; margin-right: 50px; position:fixed;}
+
+.logo_wrap { font-size: 30px; font-family: 'Pacifico'; text-align: center; line-height: 30px; letter-spacing: .09em; color: #002242;}
+a .logo_wrap { color: #002242; text-decoration: none; }
+a:visited .logo_wrap { color: #F8BBD0; }
+
+.main_nav { margin-top: 25px; text-align: right; width: 225px;}
+.main_nav ul { padding: 0; margin: 0; }
+.main_nav li { list-style: none; padding-right: 50px; border-right: 3px solid #FFFFFF; margin-bottom: 18px; font-size: 24px; }
+.main_nav li:hover { border-right: 3px solid #aaa; color: #aaa; }
+.main_nav li#{{ base }}Nav{ border-right: 3px solid #F8BBD0; color: #F8BBD0; }
+.main_nav a { text-decoration: none; color: #002242; }
+
+
+.page_wrap { width: 600px; padding-bottom: 125px; margin-top: 25px; background-color:#FFFFFF; display: inline-block; margin-left: 275px;}
+.page_wrap a { color: #268bd2; text-decoration: none; }
+
+header { font-family:'Pacifico'; font-size: 3em; padding: 20px;}
+@media only screen and (max-width: 1000px) { /* - Narrow Layout - */
+
+.footer { position:fixed; bottom:0; text-align: right; font-size:.75em; color: #268bd2; padding: auto;}
+.footer a {color:#F8BBD0;}
+
+} /* - End Narrow - */
+
+
+
+</style>
+
+{{ analytics|safe }}
+<script type="text/javascript" src="../../files/angular.min.js"></script>
+<script>
+var demo = angular.module("demo", [],
+  function($interpolateProvider) {
+    $interpolateProvider.startSymbol('[!');
+    $interpolateProvider.endSymbol('!]');
+}) ///
+
+demo.controller('Ctrl', function($scope, $http) {
+  $scope.huDisplay = 'on';
+
+{% if page_id == 'entries' %}
+  $scope.items = [];
+  $http({ method: 'GET', url: '../../list/entries' })
+  .success(function(data, status) { $scope.items = data; console.log(data); });
+  $scope.delete = function(data_id) {
+    if (confirm("Delete This Entry?") == true) {
+      $http({ method: 'GET', url: '../../delete/data?' + data_id})
+        .success(function(data, status) { $scope.items = data; console.log(data); });
+    }
+};
+{% endif %}
+
+}) ///
+
+</script>
+</head>
+<body>
+  <div class="user_gate" ng-show="huDisplay=='on'"><a href="{{ login_key }}">{{ gate }}</a>{% if user_name != 'No User' %}<br />{{ user_name }}{% if admin == 'true' %}<p class="color_a">admin</p>{% endif %}{% endif %}</div>
+  <aside class="left_aside" ng-show="huDisplay=='on'">
+    <a href="/"><div class="logo_wrap">Peter & Nena</div></a>
+    <nav class="main_nav"><ul>
+      <a href="../../invite"><li id="inviteNav">Invite</li></a>
+      <a href="../../rsvp"><li id="rsvpNav">RSVP</li></a>
+      <a href="../../map"><li id="mapNav">Map</li></a>
+      <a href="../../travel"><li id="travelNav">Travel</li></a>
+      <a href="../../stay"><li id="stayNav">Los Angeles</li></a>
+      <a href="../../dining"><li id="diningNav">Dining</li></a>
+      <a href="../../registry"><li id="registryNav">Registry</li></a>
+    </ul></nav><!-- - /main_nav - -->
+  </aside>
+  <main class="page_wrap">
+    {{ page_html|safe }}
+
+  </main><!-- - /page_wrap - -->
+
+</body>
+
+</html>
